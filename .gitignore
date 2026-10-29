@@ -1,0 +1,39 @@
+# 私人配置（含设备 IP / 端口）
+config.json
+limits.json
+calibration.json
+*.log
+server.log*
+*.log.*
+__pycache__/
+*.pyc
+
+# 运行时数据（各人不同，不进仓库）
+ai_groups.json
+strokes_user.json
+*.bak.json
+*.bak.*
+
+# 开发脚本与调试截图（不上传）
+patch_*.py
+fix_*.py
+test_*.py
+diag_*.py
+scan_*.py
+show_*.py
+check_*.py
+clean_*.py
+extract_*.py
+verify_*.py
+deploy_*.py
+make_*.py
+t_*.png
+ui_*.png
+*.tmp.png
+
+# 示例脚本要保留（examples/ 下）
+!examples/**
+
+# 文档用的预览图要保留（README 会引用）
+!界面预览-*.png
+!docs/**

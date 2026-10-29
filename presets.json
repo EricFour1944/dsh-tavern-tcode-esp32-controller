@@ -1,0 +1,461 @@
+{
+  "version": 3,
+  "active": "前戏·慢",
+  "groups": {
+    "前戏·慢": [
+      {
+        "kind": "stroke",
+        "stroke": "swirl-tease",
+        "stroke_cn": "回旋挑逗",
+        "name": "回旋轻抚",
+        "bpm": 26,
+        "gain": 0.5,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "orbit-tease",
+        "stroke_cn": "绕环挑逗",
+        "name": "绕环轻抚",
+        "bpm": 24,
+        "gain": 0.45,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "forward-back-tease",
+        "stroke_cn": "前后挑逗",
+        "name": "前后轻挑",
+        "bpm": 28,
+        "gain": 0.45,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "left-right-tease",
+        "stroke_cn": "左右挑逗",
+        "name": "左右轻撩",
+        "bpm": 30,
+        "gain": 0.45,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "vortex-tease",
+        "stroke_cn": "漩涡挑逗",
+        "name": "漩涡挑逗",
+        "bpm": 22,
+        "gain": 0.5,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "tease-orbit-right",
+        "stroke_cn": "右侧绕环挑逗",
+        "name": "右侧绕圈",
+        "bpm": 26,
+        "gain": 0.45,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "tease-orbit-left",
+        "stroke_cn": "左侧绕环挑逗",
+        "name": "左侧绕圈",
+        "bpm": 26,
+        "gain": 0.45,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "tease-back-swirl-left",
+        "stroke_cn": "后旋挑逗·左",
+        "name": "后旋挑逗·左",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "tease-back-swirl-right",
+        "stroke_cn": "后旋挑逗·右",
+        "name": "后旋挑逗·右",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "tease-up-down-circle-right",
+        "stroke_cn": "上下绕圈·右",
+        "name": "上下绕圈·右",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "tease-back-swirl-right",
+        "stroke_cn": "后旋挑逗·右",
+        "name": "后旋挑逗·右",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "tease-orbit-right",
+        "stroke_cn": "右侧绕环挑逗",
+        "name": "右侧绕环挑逗",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "grind-forward-back-phased",
+        "stroke_cn": "前后研磨（错相）",
+        "name": "前后研磨（错相）",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "long-stroke-2",
+        "stroke_cn": "长行程 2",
+        "name": "长行程 2",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "vortex-tease",
+        "stroke_cn": "漩涡挑逗",
+        "name": "漩涡挑逗",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "orbit-tease",
+        "stroke_cn": "绕环挑逗",
+        "name": "绕环挑逗",
+        "bpm": 40.0,
+        "gain": 0.8,
+        "secs": 20.0,
+        "accel": 0.3,
+        "trans": 0.25
+      }
+    ],
+    "抽插·标准": [
+      {
+        "kind": "stroke",
+        "stroke": "down-forward",
+        "stroke_cn": "下压前推",
+        "name": "下压前推",
+        "bpm": 52,
+        "gain": 0.85,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "down-backward",
+        "stroke_cn": "下压后拉",
+        "name": "下压后拉",
+        "bpm": 52,
+        "gain": 0.85,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "thrust-forward",
+        "stroke_cn": "前顶",
+        "name": "前顶",
+        "bpm": 56,
+        "gain": 0.85,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "back-thrust-down",
+        "stroke_cn": "后拉下顶",
+        "name": "后拉下顶",
+        "bpm": 48,
+        "gain": 0.9,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "diagonal-down-forward",
+        "stroke_cn": "斜向下前",
+        "name": "斜向前插",
+        "bpm": 50,
+        "gain": 0.8,
+        "secs": 18,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "diagonal-down-back",
+        "stroke_cn": "斜向下后",
+        "name": "斜向后拉",
+        "bpm": 50,
+        "gain": 0.8,
+        "secs": 18,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "long-stroke-1",
+        "stroke_cn": "长行程 1",
+        "name": "长行程·慢起",
+        "bpm": 44,
+        "gain": 0.95,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "long-stroke-2",
+        "stroke_cn": "长行程 2",
+        "name": "长行程·加速",
+        "bpm": 48,
+        "gain": 0.95,
+        "secs": 20,
+        "accel": 0.3,
+        "trans": 0.25
+      }
+    ],
+    "深插·重": [
+      {
+        "kind": "stroke",
+        "stroke": "long-stroke-4",
+        "stroke_cn": "长行程 4",
+        "name": "整根到底",
+        "bpm": 32,
+        "gain": 1.0,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "long-stroke-5",
+        "stroke_cn": "长行程 5",
+        "name": "到底停顿",
+        "bpm": 28,
+        "gain": 1.0,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "thrust-forward-swirl",
+        "stroke_cn": "前顶·旋",
+        "name": "前顶带旋",
+        "bpm": 34,
+        "gain": 1.0,
+        "secs": 22,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "lean-forward-thrust-down",
+        "stroke_cn": "前倾下顶",
+        "name": "前倾下压",
+        "bpm": 30,
+        "gain": 1.0,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "back-thrust-down-swirl",
+        "stroke_cn": "后拉下顶·旋",
+        "name": "后拉下顶旋",
+        "bpm": 32,
+        "gain": 1.0,
+        "secs": 22,
+        "accel": 0.3,
+        "trans": 0.25
+      }
+    ],
+    "研磨·贴身": [
+      {
+        "kind": "stroke",
+        "stroke": "grind-circular",
+        "stroke_cn": "圆形研磨",
+        "name": "圆形研磨",
+        "bpm": 28,
+        "gain": 0.55,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "grind-forward-back",
+        "stroke_cn": "前后研磨（慢）",
+        "name": "前后研磨",
+        "bpm": 26,
+        "gain": 0.5,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "grind-vortex",
+        "stroke_cn": "漩涡研磨",
+        "name": "漩涡研磨",
+        "bpm": 24,
+        "gain": 0.55,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "forward-back-grind",
+        "stroke_cn": "前后研磨",
+        "name": "贴身前磨",
+        "bpm": 28,
+        "gain": 0.5,
+        "secs": 25,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "grind-forward-tilt",
+        "stroke_cn": "前向研磨·倾斜",
+        "name": "前向研磨",
+        "bpm": 30,
+        "gain": 0.5,
+        "secs": 22,
+        "accel": 0.3,
+        "trans": 0.25
+      }
+    ],
+    "节奏·边缘": [
+      {
+        "kind": "stroke",
+        "stroke": "short-mid-roll-forward",
+        "stroke_cn": "中位短滚·前",
+        "name": "中位短滚·前",
+        "bpm": 68,
+        "gain": 0.7,
+        "secs": 15,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "short-mid-roll-backward",
+        "stroke_cn": "中位短滚·后",
+        "name": "中位短滚·后",
+        "bpm": 66,
+        "gain": 0.7,
+        "secs": 15,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "short-high-roll-forward",
+        "stroke_cn": "高位短滚·前",
+        "name": "高位短滚·前",
+        "bpm": 74,
+        "gain": 0.65,
+        "secs": 12,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "short-low-roll-backward",
+        "stroke_cn": "低位短滚·后",
+        "name": "低位短滚·后",
+        "bpm": 64,
+        "gain": 0.7,
+        "secs": 15,
+        "accel": 0.3,
+        "trans": 0.25
+      },
+      {
+        "kind": "stroke",
+        "stroke": "tease-up-down-circle-right",
+        "stroke_cn": "上下绕圈·右",
+        "name": "上下绕圈·右",
+        "bpm": 58,
+        "gain": 0.65,
+        "secs": 15,
+        "accel": 0.3,
+        "trans": 0.25
+      }
+    ]
+  },
+  "interrupt": "boundary",
+  "compose": {
+    "tag": "osr-compose",
+    "enabled": true,
+    "max_cards": 6,
+    "max_secs": 60,
+    "bpm_cap": 120
+  },
+  "loop": {
+    "mode": "single",
+    "minutes": 30
+  },
+  "drive": {
+    "teach": true,
+    "rewind_stop": true
+  }
+}

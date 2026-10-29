@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OSR2 / SR6 中文控制器</title>
+<link rel="icon" href="/static/logo.webp" />
+  <link rel="stylesheet" href="/static/style.css?v=20261030-1530" />
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="/static/logo.webp" class="brand-logo" alt="logo" />
+    <span class="dot" id="conn-dot"></span>
+    <h1>OSR2 / SR6 中文控制器</h1>
+    <span class="ver" title="测试版：功能仍在变动，请先小幅度测试再正式游玩">V0.1 测试版</span>
+    <span class="sub" id="conn-text">未连接</span>
+  </div>
+  <div class="conn">
+    <span class="lan" id="lan-url"></span>
+    <select id="backend">
+      <option value="auto">自动（WiFi → 串口 → 桥）</option>
+      <option value="wifi">只用 WiFi</option>
+      <option value="serial">只用串口</option>
+      <option value="bridge">只用 TCode 桥(7777)</option>
+    </select>
+    <input id="wifi-ip" type="text" value="192.168.1.54" />
+    <select id="port"><option value="COM3">COM3</option></select>
+    <button id="btn-connect" class="btn">连接</button>
+    <button id="btn-firmware" class="btn small">驱动固件</button>
+    <button id="btn-stop" class="btn danger">全部停止</button>
+  </div>
+</header>
+
+<div class="app">
+  <nav class="rail">
+    <button class="rail-btn active" data-page="console"><span class="ico">🎛</span><span>控制台</span></button>
+    <button class="rail-btn" data-page="strokes"><span class="ico">🌀</span><span>动作库</span></button>
+    <button class="rail-btn" data-page="plugin"><span class="ico">🔌</span><span>联动</span></button>
+    <button class="rail-btn" data-page="media"><span class="ico">🎬</span><span>脚本·视频</span></button>
+    <div class="rail-sep"></div>
+    
+    <button class="rail-btn" id="rail-calib"><span class="ico">🎯</span><span>校准</span></button>
+    <button class="rail-btn" data-page="help"><span class="ico">📘</span><span>使用说明</span></button>
+  </nav>
+
+  <div class="pages">
+    <section class="page active" id="page-console">
+      <div class="cs-top">
+        <span class="cs-dot" id="cs-dot"></span>
+        <b id="cs-state">设备未连接</b>
+        <span class="cs-div"></span>
+        <span class="hint">当前轴</span><b id="cs-axis">L0 行程</b>
+        <span class="cs-div"></span>
+        <span class="hint">位置</span><b id="cs-pos">50%</b>
+        <span class="cs-div"></span>
+        <span class="hint">模式</span><b id="cs-mode">空闲</b>
+        <span class="cs-ops">
+          <button class="btn small" id="cs-home" title="所有轴回到中位（慢速）">⌂ 归中</button>
+          <button class="btn small danger" id="cs-stop" title="停止当前动作（不锁存急停）">■ 停止动作</button>
+        </span>
+      </div>
+
+      <div class="cs-grid">
+        <div class="stack">
+          <div class="card cs-manual">
+            <div class="card-head"><h2>直接控制</h2><span class="hint" id="hint-pos">范围 0–100 %</span></div>
+            <div class="axis-tabs" id="axis-tabs">
+              <button data-axis="L0" class="chip active">L0 行程</button>
+              <button data-axis="R1" class="chip">R1 前后</button>
+              <button data-axis="R2" class="chip">R2 左右</button>
+              <button data-axis="R0" class="chip">R0 扭转</button>
+            </div>
+            <div class="cs-posbox">
+              <input type="range" id="pos" min="0" max="100" step="1" value="50" />
+              <div class="ctrl-num"><input type="number" id="pos-num" min="0" max="100" step="1" value="50" /><span>%</span></div>
+            </div>
+            <div class="row cs-actions">
+              <button class="btn primary small" id="btn-apply">应用位置</button>
+              <button class="btn small" id="btn-calib">设备校准…</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>各轴输出范围</h2><span class="hint" id="out-state">未连接</span></div>
+            <div class="out-list" id="out-list"></div>
+            <p class="hint cs-tip">每根轴的可动区间（双滑杆 = 下限 / 上限），改完立即生效。</p>
+          </div>
+
+          <div class="card cs-params">
+            <details id="params-details">
+              <summary>参数 · 影响新卡片与整体节奏</summary>
+              <div class="cfg-row"><label>变速方式</label>
+                <select id="p-change-bpm"><option value="transition">切换动作时</option><option value="continuous">持续变化</option></select></div>
+              <div class="cfg-row"><label>BPM 范围</label>
+                <div class="dual"><input type="range" id="bpm-min" min="5" max="120" step="1" value="20" />
+                  <input type="range" id="bpm-max" min="5" max="120" step="1" value="60" /></div>
+                <span class="cfg-val" id="bpm-val">20 – 60</span></div>
+              <div class="cfg-row"><label>加速度</label>
+                <input type="range" id="p-accel" min="0" max="20" step="1" value="3" /><span class="cfg-val" id="accel-val">0.3 秒</span></div>
+              <div class="cfg-row"><label>动作时长</label>
+                <input type="range" id="p-secs" min="5" max="120" step="1" value="20" /><span class="cfg-val" id="secs-val">20 秒</span></div>
+              <div class="cfg-row"><label>过渡时长</label>
+                <input type="range" id="p-trans" min="0" max="15" step="1" value="3" /><span class="cfg-val" id="trans-val">0.3 秒</span></div>
+              <div class="cfg-row"><label>安全行程</label>
+                <input type="range" id="p-lo" min="0" max="49" step="1" value="25" />
+                <input type="range" id="p-hi" min="51" max="100" step="1" value="75" />
+                <span class="cfg-val" id="limit-val">25 – 75 %</span></div>
+              <div class="row">
+                <button class="btn small" id="btn-save-params">保存参数</button>
+                <button class="btn small" id="btn-reset-params">恢复默认</button>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="card cs-presets">
+          <div class="card-head"><h2>动作预设</h2>
+            <span class="hint"><b id="cs-group">—</b> · 点 ▶ 运行，改完自动保存<span id="cs-preset-hint" class="lk-scrollhint" hidden> · 滚轮浏览</span></span></div>
+          <div class="groups" id="groups"></div>
+          <div class="group-ops">
+            <button class="btn small" id="btn-g-new">＋ 新建组</button>
+            <button class="btn small" id="btn-g-copy">复制当前组</button>
+            <button class="btn small" id="btn-g-rename">重命名</button>
+            <button class="btn small danger" id="btn-g-del">删除组</button>
+            <button class="btn small" id="btn-add-card">＋ 波形卡</button>
+            <button class="btn small" id="btn-pick-stroke">＋ 动作卡</button>
+            <button class="btn small" id="btn-import-strokes">⇩ 导入动作库</button>
+            <button class="btn small primary" id="btn-seq">▶▶ 整套连播</button>
+          </div>
+          <div class="presets lk-scroll" id="presets"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-strokes">
+      <div class="sl-grid">
+        <div class="stack">
+          <div class="card sl-viewer-card">
+            <div class="card-head"><h2>3D 预览</h2>
+              <span class="hint" id="v3d-state">跟随设备实时位置</span>
+              <span class="hint" id="v3d-fps"></span>
+              <span class="sl-v3d-ops">
+                <button class="icon-btn" id="v3d-full" type="button" title="放大 / 还原（Esc）">⛶</button>
+                <label class="sl-check" title="关闭后释放模型内存与显卡资源"><input type="checkbox" id="v3d-toggle" checked /> 启用</label>
+              </span>
+            </div>
+            <div class="sl-stage">
+              <canvas id="view3d" class="sl-canvas"></canvas>
+              <div class="sl-off" id="v3d-off" hidden>预览已关闭<br><span>省内存模式：勾选「启用」重新载入</span></div>
+              <details class="v3d-parts" id="v3d-parts">
+                <summary>部件显示</summary>
+                <div class="v3d-parts-list" id="v3d-parts-list"></div>
+                <label class="v3d-mirror"><input type="checkbox" id="v3d-linkchain" checked /> 显示俯仰连杆（原版单侧机构）</label>
+                <label class="v3d-mirror"><input type="checkbox" id="v3d-dbg" /> 部件标色（排查用）</label>
+              </details>
+              <div class="sl-hud">
+                <span class="hud-chip">L0 <b id="v3d-l0">50%</b></span>
+                <span class="hud-chip">R1 <b id="v3d-r1">50%</b></span>
+                <span class="hud-chip">R2 <b id="v3d-r2">50%</b></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card sl-play-card">
+            <div class="card-head"><h2>自由播放</h2><span class="hint">随机轮换 · Space</span></div>
+            <div class="sl-play-row">
+              <button class="btn primary sl-fp" id="btn-freeplay">▶ 自由播放（Space）</button>
+              <div class="cfg-row"><label>换动作间隔</label>
+                <input type="range" id="fp-interval" min="5" max="90" step="1" value="18" />
+                <span class="cfg-val" id="fp-interval-val">18 秒</span></div>
+            </div>
+            <p class="hint">按间隔随机换一个动作连续播；结束时自动回中位并停止。</p>
+          </div>
+        </div>
+
+        <div class="card sl-lib">
+          <div class="card-head"><h2>动作库</h2>
+            <span class="hint">共 <b id="stroke-count">-</b> 个 · 点 ▶ 播放<span id="stroke-scrollhint" class="lk-scrollhint" hidden> · 滚轮浏览</span></span></div>
+
+          <div class="sl-bar">
+            <input id="stroke-search" type="text" class="sl-search" placeholder="搜索动作（中文 / 英文）" />
+            <label class="sl-ctl">速度
+              <input type="range" id="stroke-bpm" min="10" max="240" step="1" value="60" />
+              <input type="number" id="stroke-bpm-num" min="10" max="240" step="1" value="60" />
+              <span>BPM</span></label>
+            <label class="sl-ctl">时长
+              <input type="number" id="stroke-secs" min="0" max="1800" step="10" value="0" />
+              <span>秒</span></label>
+            <label class="sl-check"><input type="checkbox" id="stroke-single" /> 单轴模式</label>
+            <span class="hint" id="stroke-bpm-hint"></span>
+            <span class="sl-bar-ops">
+              <button class="btn small" id="stroke-stop">■ 停止</button>
+              <button class="btn small" id="btn-new-stroke">＋ 新建动作</button>
+            </span>
+          </div>
+
+          <div class="stroke-grid lk-scroll sl-scroll" id="stroke-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    
+
+    <section class="page" id="page-plugin">
+      <div class="lk-top">
+        <div class="lk-head">
+          <span class="lk-dot" id="lk-dot"></span>
+          <b id="lk-conn">设备未连接</b>
+          <span class="lk-divider"></span>
+          <span class="hint">正在播放</span><b id="lk-playing">—</b>
+          <span class="lk-divider"></span>
+          <label class="lk-ctl" title="正在播一个动作组时，新触发到来该怎么处理">
+            新触发时
+            <select id="lk-interrupt">
+              <option value="boundary">播完当前动作就切</option>
+              <option value="after-group">播完整组再切</option>
+              <option value="immediate">立即切</option>
+            </select>
+          </label>
+          <span class="hint">待切换</span><b id="lk-pending">—</b>
+          <span class="lk-divider"></span>
+          <label class="lk-ctl" title="一轮对话结束后，设备要不要接着播">播完
+            <select id="lk-loop">
+              <option value="off">停止</option>
+              <option value="single" selected>循环本组</option>
+              <option value="rotate">循环并换组</option>
+            </select>
+          </label>
+          <label class="lk-ctl">最长<input type="number" id="lk-loop-min" min="1" max="240" step="5" value="30" style="width:54px" />分</label>
+          <span class="lk-divider"></span>
+          <span class="hint">链路</span><b id="lk-link">正常</b>
+          <span class="lk-head-ops">
+            <button class="btn small" id="lk-stop" title="停止当前动作组 / 预设 / 脚本">■ 停止播放</button>
+            <button class="btn small" id="kw-refresh" title="重新读取绑定与分组">↻ 刷新</button>
+          </span>
+        </div>
+
+        <div class="lk-toprow">
+          <div class="card lk-lastcard">
+            <div class="card-head"><h2>最近触发</h2>
+              <span class="lk-head-ops">
+                <span class="hint"><span id="kw-last">暂无记录</span><span id="lk-histhint" class="lk-scrollhint" hidden> · 滚轮浏览</span></span>
+                <button class="btn tiny" id="lk-clear-history" title="清空本机记录（不影响服务器状态）">清空</button>
+              </span></div>
+            <div class="lk-history" id="lk-history"></div>
+          </div>
+
+          <div class="card lk-helpcard">
+            <details class="lk-helpwrap">
+              <summary>接入说明 · POST /api/plugin/trigger</summary>
+              <details class="lk-details" open>
+                <summary>POST 一段正文（命中关键词）</summary>
+                <div class="lk-code">
+                  <pre class="code" id="code-1">POST http://127.0.0.1:8899/api/plugin/trigger
+Content-Type: application/json
+
+{"text": "{{当前正文}}"}</pre>
+                  <button class="btn tiny" data-copy="code-1">复制</button>
+                </div>
+              </details>
+              <details class="lk-details">
+                <summary>直接指定分组（跳过关键词）</summary>
+                <div class="lk-code">
+                  <pre class="code" id="code-2">{"group": "前戏·慢"}</pre>
+                  <button class="btn tiny" data-copy="code-2">复制</button>
+                </div>
+              </details>
+              <details class="lk-details">
+                <summary>新组触发时怎么处理正在播放的组</summary>
+                <div class="lk-code">
+                  <pre class="code" id="code-4">POST http://127.0.0.1:8899/api/plugin/interrupt
+{"mode": "boundary"}
+
+boundary    播完当前动作就切（默认）
+after-group 播完整组再切
+immediate   立即切</pre>
+                  <button class="btn tiny" data-copy="code-4">复制</button>
+                </div>
+              </details>
+              <details class="lk-details">
+                <summary>命令行测试</summary>
+                <div class="lk-code">
+                  <pre class="code" id="code-3">curl -X POST http://127.0.0.1:8899/api/plugin/trigger \
+  -H "Content-Type: application/json" \
+  -d '{"text":"亲热一下"}'</pre>
+                  <button class="btn tiny" data-copy="code-3">复制</button>
+                </div>
+                <p class="hint">PowerShell 用 <code>curl.exe</code>；中文必须按 UTF-8 发送。</p>
+              </details>
+              <details class="lk-details">
+                <summary>返回值含义</summary>
+                <pre class="code">{"ok": true,  "group": "前戏·慢", "sequence": {"count": 7}}
+{"ok": false, "reason": "no_match"}        ← 没有触发词
+{"ok": false, "reason": "not_connected"}   ← 设备没连上</pre>
+              </details>
+              <p class="hint">酒馆里可放进「快捷回复 / 正则替换 / 脚本函数」，把消息正文作为 text 发过来。</p>
+            </details>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="card lk-compose-card">
+        <div class="card-head"><h2>AI 编排（L1）</h2>
+          <span class="hint">模型自己组合一段节奏，只播一次、不写进动作库</span></div>
+        <p class="hint">模型在正文里写一个 <code>标记</code> 代码块就能「自己编一段组合」。这里改完立刻生效，插件每轮读一次，不用重启酒馆。</p>
+        <div class="lk-compose">
+          <label class="lk-cp-check"><input type="checkbox" id="cp-enabled" checked /> 启用</label>
+          <label>触发标记<input type="text" id="cp-tag" value="osr-compose" maxlength="24" /></label>
+          <label>最多段数<input type="number" id="cp-cards" min="1" max="12" step="1" value="6" /></label>
+          <label>单段最长秒<input type="number" id="cp-secs" min="5" max="600" step="5" value="60" /></label>
+          <label>BPM 上限<input type="number" id="cp-bpm" min="20" max="240" step="5" value="120" /></label>
+          <button class="btn tiny" id="cp-save">保存</button>
+          <span class="hint" id="cp-state"></span>
+        </div>
+        <div class="lk-drive">
+          <label class="check" title="关掉后前台提示词不再教模型写 osr 代码块（正文更干净）；老卡自己写的块仍然能被识别">
+            <input type="checkbox" id="dv-teach" checked /> 教模型写指令块
+          </label>
+          <label class="check" title="玩家回退 / 重新生成 / 编辑正文时，设备立刻停下，不继续演旧剧情">
+            <input type="checkbox" id="dv-rewind" checked /> 回退时停设备
+          </label>
+          <span class="hint">关掉「教」＝前台只写故事，设备改由关键词或后台判断驱动</span>
+        </div>
+        <div class="lk-code">
+          <pre class="code" id="code-5">```osr-compose
+{"compose":[{"stroke":"down-forward","bpm":40,"secs":20},
+            {"stroke":"back-thrust-down","bpm":65,"secs":15}],
+ "gain":0.7,"label":"慢起快收"}
+```</pre>
+          <button class="btn tiny" data-copy="code-5">复制</button>
+        </div>
+      </div>
+
+      <div class="lk-mods">
+        <div class="card lk-mod">
+          <div class="card-head"><h2><span class="step">①</span>关键词 → 动作组</h2>
+            <span class="hint"><b id="kw-count">0</b> 条 · 分组名也算触发词<span id="kw-scrollhint" class="lk-scrollhint" hidden> · 滚轮浏览</span></span></div>
+          <div class="lk-bind">
+            <input id="kw-word" type="text" maxlength="20" placeholder="关键词，例：亲吻" />
+            <select id="kw-group"></select>
+            <button class="btn primary small" id="kw-bind">绑定</button>
+          </div>
+          <p class="hint lk-bind-hint">重复绑定会覆盖原分组；命中时名称更长的分组优先。</p>
+          <div class="lk-filter">
+            <input id="kw-filter" type="text" placeholder="筛选关键词 / 分组…" />
+            <span class="hint" id="kw-filter-info"></span>
+          </div>
+          <div class="kw-list lk-scroll" id="kw-list"></div>
+        </div>
+
+        <div class="card lk-mod">
+          <div class="card-head"><h2><span class="step">②</span>动作组编辑</h2>
+            <span class="hint"><span id="ge-count"></span><span id="ge-scrollhint" class="lk-scrollhint" hidden> · 滚轮浏览</span></span></div>
+          <div class="ge-tabs">
+            <button class="ge-tab active" id="ge-tab-mine">我的动作组</button>
+            <button class="ge-tab" id="ge-tab-ai">AI 暂存<span class="ge-badge" id="ge-ai-badge">0</span></button>
+          </div>
+          <div id="ge-pane-mine">
+          <div class="lk-grouphead">
+            <select id="ge-group"></select>
+            <button class="btn small" id="lk-try" title="立即播放这一组">▶ 试播</button>
+          </div>
+          <div class="groups" id="ge-groups"></div>
+          <div class="ge-list lk-scroll" id="ge-list"></div>
+          <div class="ge-add">
+            <div class="lk-addrow">
+              <label>加入</label>
+              <select id="ge-stroke"></select>
+              <input type="number" id="ge-bpm" value="40" min="5" max="240" title="BPM" />
+              <input type="number" id="ge-gain" value="80" min="10" max="100" title="幅度 %" />
+              <input type="number" id="ge-secs" value="20" min="1" max="300" title="时长 秒" />
+              <button class="btn small primary" id="ge-add">加入</button>
+            </div>
+            <p class="hint lk-addhint">依次是 BPM / 幅度 % / 时长 秒</p>
+          </div>
+          <div class="row lk-group-ops">
+            <button class="btn small" id="ge-create">＋ 新建组</button>
+            <button class="btn small" id="ge-dup">复制组</button>
+            <button class="btn small" id="ge-rename">重命名</button>
+            <button class="btn small danger" id="ge-del">删除组</button>
+          </div>
+          </div>
+
+          <div id="ge-pane-ai" hidden>
+            <p class="hint ge-aihint">AI 在对话里经过你同意存下的组，会先落在这里（不会直接进你的动作组）。点「保存为我的」才会变成正式组，之后就能用关键词或 <code>osr</code> 代码块触发。</p>
+            <div class="ge-list lk-scroll" id="ai-list"></div>
+            <div class="row lk-group-ops">
+              <button class="btn small danger" id="ai-clear">清空 AI 暂存</button>
+              <span class="hint" id="ai-hint"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-media">
+      <div class="media-grid">
+        <div class="card md-card">
+          <div class="card-head"><h2>Funscript 播放区</h2><span class="hint" id="fs-info">拖入 .funscript 文件</span></div>
+          <div id="drop" class="drop md-drop">
+            <p>把 <b>.funscript</b> 文件拖到这里</p>
+            <label class="btn small">选择文件<input type="file" id="file" accept=".funscript,.json,.txt" multiple hidden /></label>
+          </div>
+          <div class="files md-files" id="files"></div>
+          <canvas id="wave" height="240"></canvas>
+          <div class="transport md-bar">
+            <button class="btn primary small" id="btn-play">▶ 播放</button>
+            <button class="btn" id="btn-pause">⏸ 暂停</button>
+            <button class="btn" id="btn-fsclear">✕ 清空</button>
+            <label class="check"><input type="checkbox" id="loop" /> 循环</label>
+            <label>倍速 <input type="range" id="fs-speed" min="0.5" max="2" step="0.1" value="1" /> <span id="fs-speed-val">1.0x</span></label>
+            <span class="time" id="fs-time">0.0s / 0.0s</span>
+          </div>
+        </div>
+        <div class="card md-card">
+          <div class="card-head"><h2>视频 + 脚本同步</h2><span class="hint" id="video-info">拖入视频文件</span></div>
+          <div id="vdrop" class="drop md-drop">
+            <p>把 <b>视频文件</b> 拖到这里，脚本跟着视频走</p>
+            <label class="btn small">选择视频<input type="file" id="vfile" accept="video/*" hidden /></label>
+          </div>
+          <video id="video" controls playsinline></video>
+          <div class="md-vph" id="vph"><span>还没有视频</span><small>拖入 mp4 / webm，脚本会跟着视频走</small></div>
+          <div class="transport md-bar">
+            <label class="check"><input type="checkbox" id="sync" checked /> 与脚本同步</label>
+            <span class="hint" id="sync-info">播放视频时自动开始</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-help">
+      <div class="help-wrap">
+
+        <div class="card help-card help-beta">
+          <div class="card-head"><h2>🧪 测试版 V0.1</h2></div>
+          <ul class="help-list">
+            <li>这是<b>测试版</b>，功能还在变动，可能有 bug 或行为变化。
+              <b>请先小幅度、短时间测试，确认你的设备运行正常、动作组没有顶到行程，再正式游玩。</b>
+              第一次用建议不超过 30% 幅度、单段不超过 10 秒。</li>
+            <li>本项目配合 <b>DSH Tavern</b> 使用（插件装在 Tavern 里）：
+              <a href="https://github.com/flizzywine/dsh-tavern" target="_blank" rel="noopener">github.com/flizzywine/dsh-tavern</a></li>
+            <li>控制器本体不依赖 Tavern：<b>不开 Tavern 也能单独当播放器用</b>。
+              只有要"文字驱动设备"时才需要装插件。</li>
+            <li>遇到问题先看「八、出问题了看这里」，再看 <code>server.log</code>。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card help-warn">
+          <div class="card-head"><h2>⚠ 先看这三条</h2></div>
+          <ol class="help-list">
+            <li><b>手边随时能按到急停。</b>红色「急停」按钮按下后会<b>锁存</b>——所有运动指令被拒，
+              直到点「归中 恢复」或按 <kbd>Esc</kbd> 走解锁流程。</li>
+            <li><b>无人看管时不要运行。</b>要长时间连续播，用「联动 → 播完 → 循环本组」并设一个
+              「最长 N 分钟」，别让它整晚跑。</li>
+            <li><b>先用小幅度试。</b>新动作、新组、新设备，先把幅度滑到 30–40% 试一次，
+              确认行程没顶死、线材没被拽住，再加大。</li>
+          </ol>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>一、第一次启动</h2></div>
+          <ul class="help-list">
+            <li><b>启动控制器（后台常驻）.bat</b> —— 浏览器会自动打开 <code>http://127.0.0.1:8899</code>，窗口不占屏幕。</li>
+            <li><b>启动控制器.bat</b> —— 只想临时用一次，关掉黑色窗口就停止。</li>
+            <li><b>启动控制器（手机可访问）.bat</b> —— 手机连同一个 WiFi，按窗口里显示的
+              <code>http://192.168.x.x:8899</code> 打开。</li>
+            <li>控制器是<b>独立进程</b>：关掉浏览器页面不影响它，重启 DSH 也不影响它。
+              要停就双击 <b>停止控制器.bat</b>。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>二、连接设备</h2></div>
+          <ul class="help-list">
+            <li>顶部「后端」选 <b>自动（WiFi → 串口 → 桥）</b>，填设备 IP，点「连接」。</li>
+            <li>连不上时依次试：确认设备与电脑在同一 WiFi → 改用串口（选 COM 口）→
+              用 TCode 桥（127.0.0.1:7777）。</li>
+            <li>Windows 防火墙要允许 Python 访问网络；<code>server.log</code> 里有失败原因。</li>
+            <li>右上「运行状态」看：后端、模式、预设、四轴位置。<b>没连上时页面照常可用</b>，
+              只是设备不动。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>三、动作库</h2></div>
+          <ul class="help-list">
+            <li>内置 <b>42</b> 个动作，总数上限 <b>80</b>（到顶会拒绝新建）。</li>
+            <li>▶ 播放一次；<b>✎</b> 改曲线（内置也能改，改的是「覆盖层」）；<b>↺</b> 还原；
+              <b>✕</b> 删除自建动作（内置不能删）。</li>
+            <li>「幅度」是每个动作各自的输出比例；「速度」和「时长」在播放前调。</li>
+            <li>「新建动作」里可以先试听（不保存），满意再存；有「被 N 个动作组使用」提示，
+              改这条曲线会一起影响那些组。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>四、联动：动作组、触发、循环</h2></div>
+          <ul class="help-list">
+            <li><b>① 关键词 → 动作组</b>：绑一个关键词，正文里出现就播；组名本身也算触发词。</li>
+            <li><b>② 动作组编辑</b>：两个标签页——「我的动作组」和「AI 暂存」。
+              加入动作时可填 BPM / 幅度% / 时长秒；组能新建、复制、重命名、删除。</li>
+            <li><b>打断方式</b>（顶部条下拉）：正在播 A 时又来了 B——
+              <b>播完当前动作再切</b>（默认）/ <b>整组播完再切</b> / <b>立刻切</b>。</li>
+            <li><b>播完</b>（顶部条下拉）：<b>停止</b> / <b>循环本组</b> / <b>循环并换组</b>。
+              选循环后，一轮对话结束、没人碰界面也会继续播，直到「最长 N 分钟」自动停。
+              （没开循环时，界面 10 秒没有任何请求会被看门狗自动停，这是防关页面的安全机制。）</li>
+            <li><b>AI 编排</b>：勾「启用」后，模型可以自己拼一段组合只播一次、不写入动作库。
+              这里的触发标记、段数上限、单段最长、BPM 上限都<b>改完即时生效</b>。</li>
+            <li><b>AI 暂存</b>：模型经你同意存下的组先落在这里（不直接进你的动作组）。
+              点「保存为我的动作组」才转正，之后就能用关键词或代码块触发。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>五、脚本·视频</h2></div>
+          <ul class="help-list">
+            <li>把 <code>.funscript</code> 拖进虚线框即可播放，可循环、调倍速。</li>
+            <li>勾「与脚本同步」后，播放视频会自动开始脚本。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>六、校准</h2></div>
+          <ul class="help-list">
+            <li>按设备选轴映射：OSR2 一般用 <code>L0 / R1 / R2</code>；四轴都动说明固件支持多轴，属正常。</li>
+            <li>行程范围（默认只允许 25%–75%）与速度上限在这里改。<b>软件限制不能替代你的判断</b>，
+              真正的机械极限取决于你的整机与摆件。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>七、接 DSH Tavern（让文字驱动设备）</h2></div>
+          <ul class="help-list">
+            <li>插件 <code>dsh-osr-device</code> 放进
+              <code>~/.dsh/profile-data/tavern/data/plugins/</code>，重启 DSH，在设置里确认「已加载」。</li>
+            <li>进游戏后本局设置里打开 <b>允许模型自主决定动作</b>，否则组指令不执行（<code>stop</code> 除外）。</li>
+            <li>正文里可以写：</li>
+          </ul>
+          <pre class="help-code">```osr
+{"group":"前戏·慢"}
+```</pre>
+          <ul class="help-list">
+            <li>一轮里写多个块 = 连播（先播第一个，其余进轮换池）。</li>
+            <li>模型自己组合一段（只播一次、不落盘）：</li>
+          </ul>
+          <pre class="help-code">```osr-compose
+{"compose":[{"stroke":"down-forward","bpm":40,"secs":20}],
+ "gain":0.7,"label":"慢起快收"}
+```</pre>
+          <ul class="help-list">
+            <li>控制器没开时插件会静默跳过，正文照常，不报错。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>八、出问题了看这里</h2></div>
+          <ul class="help-list">
+            <li><b>点连接失败</b>：同 WiFi？串口？防火墙？看 <code>server.log</code>。</li>
+            <li><b>连上但不动</b>：是否按过急停（锁存）→ 看「运行状态」→ 幅度是不是 0。</li>
+            <li><b>关了页面还在动</b>：正常，控制器是独立进程。按 <kbd>Esc</kbd> 或双击 <b>停止控制器.bat</b>。</li>
+            <li><b>页面卡</b>：关掉 3D 预览（右侧「启用」勾选框）。</li>
+            <li><b>改了动作没生效</b>：<kbd>Ctrl</kbd>+<kbd>F5</kbd> 强刷。</li>
+            <li><b>内置动作被改坏了</b>：点卡片上的 <b>↺</b> 还原。</li>
+            <li><b>AI 编排没反应</b>：确认「AI 编排」里勾了启用；动作名必须是动作库里的英文名。</li>
+            <li><b>组名不存在</b>：组名必须是「联动」里真实存在的，一个字都不能编。</li>
+          </ul>
+        </div>
+
+        <div class="card help-card">
+          <div class="card-head"><h2>九、身体上的注意事项</h2></div>
+          <ul class="help-list">
+            <li>疼痛、麻木、头晕、心悸 → <b>立刻急停</b>并停止使用。</li>
+            <li>有心血管疾病、癫痫、皮肤损伤、近期手术等情况，先咨询医生。</li>
+            <li>不要在床上、枕边等<b>无法立即脱身</b>的位置使用；不要在有其他人在场、
+              无法中断的场合使用。</li>
+            <li>长时间连续使用要设「最长 N 分钟」，不要整晚运行。</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <aside class="side">
+    <div class="card side-test" id="side-test">
+      <div class="card-head"><h2>测试台</h2><span class="hint">Ctrl + Enter 触发</span></div>
+      <textarea id="kw-test" class="lk-text" rows="3"
+        placeholder="粘一段正文，例：她凑到耳边轻声说：亲热一下嘛。"></textarea>
+      <div class="lk-samples">
+        <button class="chip" data-sample="她凑到耳边轻声说：亲热一下嘛。">亲热</button>
+        <button class="chip" data-sample="男人低声说：不听话就要惩罚你。">惩罚</button>
+        <button class="chip" data-sample="他动作陡然用力，几乎到底。">用力</button>
+        <button class="chip" data-sample="她小幅度地磨蹭着，惹得人心痒。">磨蹭</button>
+        <button class="chip" data-sample="别停……再快点儿。">快点</button>
+      </div>
+      <div class="lk-actions">
+        <button class="btn primary" id="kw-fire">▶ 触发</button>
+        <button class="btn small" id="lk-clear">清空</button>
+      </div>
+      <span class="lk-flag" id="kw-result"></span>
+      <div class="lk-hit" id="lk-hit" hidden></div>
+    </div>
+
+    <div class="card">
+      <h2>运行状态</h2>
+      <dl class="status">
+        <dt>后端</dt><dd id="st-backend">-</dd>
+        <dt>模式</dt><dd id="st-mode">空闲</dd>
+        <dt>预设</dt><dd id="st-preset">-</dd>
+      </dl>
+      <div class="bars" id="bars"></div>
+    </div>
+    <div class="card">
+      <h2>日志</h2>
+      <pre class="log" id="log"></pre>
+      <div class="safety-note">
+        <div class="safety-head">⚠ 安全提示</div>
+        <p><b>游玩时请把手放在急停上</b>：出现任何不适、异响或卡顿，立即按右下角 <b>「急停 ESC」</b>（或直接关闭设备电源）。</p>
+        <p>不要在身体疲劳、饮酒或注意力被占用时使用；首次试新动作组请先把手放在急停上、用低幅度试播。</p>
+        <p class="safety-ops">
+          <button class="btn small danger" id="safety-estop">■ 急停（硬停 + 锁存）</button>
+          <span class="hint">锁存后需点「归中」或在设置里解除</span>
+        </p>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="modal" id="calib-modal" hidden>
+  <div class="modal-box wide-box">
+    <h2>设备校准</h2>
+    <p class="hint">标定设备有哪些轴、方向、行程与速度上限；试动按钮按表格当前（未保存）参数发指令。</p>
+    <div class="calib-bar">
+      <label>设备型号
+        <select id="calib-profile">
+          <option value="OSR2">OSR2（3 舵机）</option>
+          <option value="SR6">SR6（6 舵机）</option>
+          <option value="CUSTOM">自定义</option>
+        </select>
+      </label>
+      <button class="btn small" id="calib-apply">应用型号</button>
+      <label>试动速度 <input type="number" id="calib-speed" min="200" max="9999" step="100" value="800" /> 单位/秒</label>
+    </div>
+    <table class="calib" id="calib-table"></table>
+    <div class="calib-safe">
+      <label>归中速度 <input type="number" id="home-speed" min="300" max="2000" step="100" value="1200" /> 单位/秒</label>
+      <button class="btn small" id="btn-home">⌂ 归中</button>
+      <button class="btn small danger" id="btn-reset-calib">↺ 重置校准</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn small" id="calib-add-axis" style="margin-right:auto">＋ 添加轴</button>
+      <button class="btn" id="calib-cancel">取消</button>
+      <button class="btn primary" id="calib-save">保存校准</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="pick-modal" hidden>
+  <div class="modal-box wide-box">
+    <h2>从动作库选择</h2>
+    <p class="hint">加入当前分组「<b id="pick-group"></b>」</p>
+    <input id="pick-search" type="text" placeholder="搜索（中文或英文）" style="width:100%;margin:6px 0 10px" />
+    <div class="pick-grid" id="pick-grid"></div>
+    <div class="modal-actions"><button class="btn" id="pick-cancel">关闭</button></div>
+  </div>
+</div>
+
+<div class="modal" id="stroke-modal" hidden>
+  <div class="modal-box wide-box se-box">
+    <div class="se-head">
+      <h2 id="se-title">新建动作</h2>
+      <span class="hint" id="se-sub">每个轴：起→止往复；相位让各轴错开；偏心让往复不对称</span>
+    </div>
+    <div class="se-body">
+      <div class="se-left">
+        <div class="se-name">
+          <label>名称</label>
+          <input id="ns-name" type="text" placeholder="例如：我的节奏" />
+          <span class="hint" id="se-id"></span>
+        </div>
+        <div id="ns-axes" class="se-axes"></div>
+      </div>
+      <div class="se-right">
+        <div class="se-preview-title">预览</div>
+        <canvas id="se-wave" width="300" height="240"></canvas>
+        <div class="se-legend" id="se-legend"></div>
+        <div class="hint se-note">拖动滑杆即时更新；波形为示意图，实际以设备输出为准</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn small" id="ns-try" title="按当前参数试播一小段，不保存">▶ 试听 8 秒</button>
+      <button class="btn small" id="ns-cancel">取消</button>
+      <button class="btn primary" id="ns-save">保存到动作库</button>
+    </div>
+  </div>
+</div>
+
+<div id="estop-banner" hidden>🛑 已急停 — 点这里解除，或点绿色「归中」恢复</div>
+
+<div class="action-dock">
+  <button id="btn-recover" class="recover">归中<span class="sub">恢复</span></button>
+  <button id="estop" class="estop">急停<span class="sub">ESC</span></button>
+</div>
+
+<script src="/static/device3d.js?v=20261030-1530"></script>
+  <script src="/static/tweak.js?v=20261030-1530"></script>
+  <script src="/static/app.js?v=20261030-1530"></script>
+</body>
+</html>

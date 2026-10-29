@@ -1,0 +1,28 @@
+{
+  "name": "dsh-osr-device",
+  "version": "0.2.0",
+  "description": "让 dsh-tavern 的正文驱动本地 OSR2/SR6 控制器：识别代码块指令或关键词，调用控制器播放动作组。Tavern plugin that drives a local OSR/SR6 controller from role-play turns.",
+  "type": "module",
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-tavern",
+    "tavern",
+    "osr",
+    "sr6",
+    "tcode"
+  ]
+}

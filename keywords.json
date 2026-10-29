@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "note": "关键词 → 分组。正文里出现 keyword 就播放对应分组；group 必须是控制器里的分组名。可在「联动」页面直接增删。",
+  "bindings": [
+    { "keyword": "亲吻", "group": "前戏·慢" },
+    { "keyword": "亲热", "group": "前戏·慢" },
+    { "keyword": "吻", "group": "前戏·慢" },
+    { "keyword": "前戏", "group": "前戏·慢" },
+    { "keyword": "挑逗", "group": "前戏·慢" },
+    { "keyword": "惩罚", "group": "抽插·标准" },
+    { "keyword": "抽插", "group": "抽插·标准" },
+    { "keyword": "顶弄", "group": "抽插·标准" },
+    { "keyword": "用力", "group": "深插·重" },
+    { "keyword": "到底", "group": "深插·重" },
+    { "keyword": "沉腰", "group": "深插·重" },
+    { "keyword": "磨蹭", "group": "研磨·贴身" },
+    { "keyword": "研磨", "group": "研磨·贴身" },
+    { "keyword": "贴身", "group": "研磨·贴身" },
+    { "keyword": "快点", "group": "节奏·边缘" },
+    { "keyword": "加速", "group": "节奏·边缘" },
+    { "keyword": "边缘", "group": "节奏·边缘" }
+  ]
+}

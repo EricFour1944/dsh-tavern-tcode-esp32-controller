@@ -1,0 +1,96 @@
+{
+ "parts": [
+  {
+   "key": "base",
+   "color": 1973790,
+   "metal": 0,
+   "rough": 1,
+   "verts": 11821,
+   "tris": 7608
+  },
+  {
+   "key": "receiver",
+   "color": 4149619,
+   "metal": 0,
+   "rough": 1,
+   "verts": 11911,
+   "tris": 5072
+  },
+  {
+   "key": "lid",
+   "color": 4149619,
+   "metal": 0,
+   "rough": 1,
+   "verts": 4522,
+   "tris": 2720
+  },
+  {
+   "key": "pitcher",
+   "color": 1973790,
+   "metal": 0,
+   "rough": 1,
+   "verts": 8740,
+   "tris": 4950
+  },
+  {
+   "key": "pitcherArm",
+   "color": 1973790,
+   "metal": 0,
+   "rough": 1,
+   "verts": 3664,
+   "tris": 1866
+  },
+  {
+   "key": "pitcherLinkArm",
+   "color": 1973790,
+   "metal": 0,
+   "rough": 1,
+   "verts": 3812,
+   "tris": 2112
+  },
+  {
+   "key": "arm",
+   "color": 1973790,
+   "metal": 0,
+   "rough": 1,
+   "verts": 6900,
+   "tris": 3260
+  },
+  {
+   "key": "modCase",
+   "color": 1973790,
+   "metal": 0,
+   "rough": 1,
+   "verts": 17483,
+   "tris": 9492
+  },
+  {
+   "key": "bearing",
+   "color": 12632256,
+   "metal": 1,
+   "rough": 0.5,
+   "verts": 652,
+   "tris": 360
+  },
+  {
+   "key": "joint",
+   "color": 12632256,
+   "metal": 1,
+   "rough": 0.5,
+   "verts": 704,
+   "tris": 352
+  }
+ ],
+ "bbox": {
+  "min": [
+   -62.999996185302734,
+   -184.00001525878906,
+   -55
+  ],
+  "max": [
+   133.4087677001953,
+   58.00000762939453,
+   126
+  ]
+ }
+}
